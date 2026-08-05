@@ -31,7 +31,7 @@
 ## Getting started
 
 ```
-meridianctl scenario start <scenario-id>
+abhyasctl scenario start <scenario-id>
 ```
 
 Stuck for 20+ minutes? `walkthrough.md` is spoiler-gated — open it section by

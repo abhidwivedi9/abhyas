@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # grade.sh — verifies the learner's fix is REAL.
-# Invoked by: meridianctl scenario grade <scenario-id>  (and by the weekly CI matrix)
+# Invoked by: abhyasctl scenario grade <scenario-id>  (and by the weekly CI matrix)
 #
 # Contract:
 #   - Must fail if the fault is still present.
@@ -12,7 +12,7 @@
 set -euo pipefail
 
 SCENARIO_ID="TEMPLATE"
-NAMESPACE="${MERIDIAN_NAMESPACE:-meridian}"
+NAMESPACE="${ABHYAS_NAMESPACE:-scg}"
 fail() { echo "[grade:${SCENARIO_ID}] FAIL: $*" >&2; exit 1; }
 pass() { echo "[grade:${SCENARIO_ID}] PASS: $*"; }
 

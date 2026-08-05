@@ -1,6 +1,6 @@
 # Security Policy
 
-Meridian ships *intentional* vulnerabilities inside scenario injections
+Abhyas ships *intentional* vulnerabilities inside scenario injections
 (`scenarios/**/inject.sh`). Those are the product, not bugs — but they must
 only ever affect the learner's own sandboxed environment.
 

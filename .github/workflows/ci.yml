@@ -19,13 +19,13 @@ jobs:
       - name: Python syntax check
         run: python -m compileall tools/
 
-      - name: meridianctl smoke test
+      - name: abhyasctl smoke test
         run: |
-          python tools/meridianctl/meridianctl.py --version
-          python tools/meridianctl/meridianctl.py scenario list
+          python tools/abhyasctl/abhyasctl.py --version
+          python tools/abhyasctl/abhyasctl.py scenario list
 
       - name: Scenario structural verification
-        run: python tools/meridianctl/meridianctl.py scenario verify
+        run: python tools/abhyasctl/abhyasctl.py scenario verify
 
       - name: Shellcheck scenario scripts
         run: |
@@ -46,5 +46,5 @@ jobs:
 
 # Future (per roadmap):
 #   - Milestone 2+: per-service build/test matrix with path filtering (ADR-0001)
-#   - Milestone 3+: ephemeral kind cluster integration tests, `meridianctl up` smoke
+#   - Milestone 3+: ephemeral kind cluster integration tests, `abhyasctl up` smoke
 #   - weekly scenario matrix: inject -> grade-must-fail -> reference fix -> grade-must-pass

@@ -17,7 +17,7 @@ Cloud SQL failover, Workload Identity) only exists in a real cloud.
 Kustomize overlay profiles. The GCP track is additive depth, never a
 prerequisite. Concretely:
 
-1. `meridianctl up` brings up the full current-milestone stack on kind on a
+1. `abhyasctl up` brings up the full current-milestone stack on kind on a
    16 GB laptop.
 2. Every scenario's `inject.sh`/`grade.sh` pair must pass on kind; GCP-only
    scenarios are explicitly tagged and kept to a minority.

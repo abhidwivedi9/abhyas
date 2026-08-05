@@ -1,4 +1,4 @@
-# Project Meridian — Architecture & Roadmap
+# Project Abhyas — Architecture & Roadmap
 
 **The Fortune 500 Production Simulator for DevOps, SRE, Platform Engineering & AI Ops**
 
@@ -8,9 +8,9 @@
 
 ## 1. Executive Summary
 
-Project Meridian is an open-source, self-hostable simulation of a Fortune 500 production
-environment. It is not a tutorial repository. It is a **fictional company** — Meridian
-Commerce Group — with real microservices, real infrastructure-as-code, real CI/CD, real
+Project Abhyas is an open-source, self-hostable simulation of a Fortune 500 production
+environment. It is not a tutorial repository. It is a **fictional company** — Sachid
+Commerce Group (SCG) — with real microservices, real infrastructure-as-code, real CI/CD, real
 GitOps, real observability, real security controls, and a **ticket-driven learning system**
 that makes you operate the platform the way an on-call engineer at Google, Netflix, or
 Uber would.
@@ -42,9 +42,9 @@ re-verify before publishing):
 | `weaveworks/sock-shop` | Early microservices reference | Unmaintained, dated stack |
 | CNCF landscape projects' own docs | Authoritative per-tool | No integration story — the hard part of DevOps is the seams *between* tools |
 | Terraform module registries (`terraform-google-modules`) | Production-grade IaC patterns | Modules without a mission — no app to deploy, no failure to recover from |
-| `dastergon/awesome-sre`, Google SRE Book | Canonical theory | Theory only. The gap between reading the SRE book and *doing* SRE is exactly the gap Meridian fills |
+| `dastergon/awesome-sre`, Google SRE Book | Canonical theory | Theory only. The gap between reading the SRE book and *doing* SRE is exactly the gap Abhyas fills |
 
-**The synthesized gaps no one covers (Meridian's moat):**
+**The synthesized gaps no one covers (Abhyas's moat):**
 
 1. **A persistent company context.** Every existing resource is either topic-shaped or
    puzzle-shaped. None is *company-shaped*: a system you join, learn, break, and grow with
@@ -63,11 +63,14 @@ re-verify before publishing):
 
 ---
 
-## 3. The Fictional Company: Meridian Commerce Group
+## 3. The Fictional Company: Sachid Commerce Group
+
+> **Sachid Commerce Group (SCG)** — *truth-consciousness, as code.*
 
 Realism requires a business. All architecture decisions trace back to these constraints.
 
-**Business:** Global e-commerce + embedded fintech (payments, ledger, fraud). This domain
+**Business:** Global e-commerce + embedded fintech under the **SwarnaPay** brand
+(payments, ledger, fraud). This domain
 is chosen deliberately — it forces the hardest problems: money-grade consistency,
 event-driven flows, PCI-flavored compliance, Black-Friday-style traffic spikes, and
 multi-region availability.
@@ -153,7 +156,7 @@ Monorepo for the platform + app code, **separate GitOps config repo** (mirrors r
 enterprise separation and enables realistic GitOps-drift scenarios):
 
 ```
-meridian/                          # main monorepo
+abhyas/                            # main monorepo
 ├── apps/                          # microservice source + Dockerfiles + unit tests
 ├── platform/
 │   ├── terraform/                 # live envs (dev/staging/prod) + bootstrap
@@ -173,9 +176,9 @@ meridian/                          # main monorepo
 ├── scenarios/                     # THE PRODUCT: incident & exercise catalog (see §7)
 ├── runbooks/                      # production runbooks (living docs, tested in drills)
 ├── docs/                          # architecture, ADRs, handbooks, interview guide
-└── tools/                         # meridianctl CLI: scenario injector, grader, resets
+└── tools/                         # abhyasctl CLI: scenario injector, grader, resets
 
-meridian-gitops/                   # Argo CD watches this repo only
+abhyas-gitops/                   # Argo CD watches this repo only
 ├── clusters/{dev,staging,prod-usc1,prod-euw1}/
 ├── apps/                          # per-service overlays, image tags pinned by CI
 └── platform/                      # addons: monitoring, mesh, secrets, policies
@@ -186,7 +189,7 @@ meridian-gitops/                   # Argo CD watches this repo only
 ```
 PR → GitHub Actions: lint → unit tests → SonarQube gate → build → Trivy scan
    → sign (cosign) → push to Artifact Registry → integration tests (kind, ephemeral)
-   → CD bot opens PR to meridian-gitops bumping image digest
+   → CD bot opens PR to abhyas-gitops bumping image digest
    → Argo CD syncs dev → automated smoke tests → promote staging → manual approval
    → Argo Rollouts canary in prod (5% → 25% → 100%) gated on Prometheus SLO analysis
    → AI deployment validator summarizes canary metrics diff before final promotion
@@ -199,7 +202,7 @@ PR → GitHub Actions: lint → unit tests → SonarQube gate → build → Triv
   locking; OpenTofu compatibility maintained and documented. Drift detection runs nightly
   and *intentionally* fires scenarios.
 
-### 5.3 Observability
+### 5.3 Observability — the Chitaksh platform
 
 - **Metrics:** Prometheus (kube-prometheus-stack) + Thanos for multi-cluster/global view.
 - **Logs:** Loki (primary) with a parallel ELK lab track (enterprise reality + interviews).
@@ -208,7 +211,7 @@ PR → GitHub Actions: lint → unit tests → SonarQube gate → build → Triv
   alerts (the Google SRE alerting model, implemented, not just described).
 - **Dashboards as code:** Grafana provisioned from git; "dashboard archaeology" exercises
   where learners must find the *wrong* dashboard telling a misleading story.
-- **Alerting:** Alertmanager → webhook "pager" (the `meridianctl pager` simulates
+- **Alerting:** Alertmanager → webhook "pager" (the `abhyasctl pager` simulates
   PagerDuty: acks, escalation policy, on-call schedule).
 
 ### 5.4 Security & Compliance
@@ -220,7 +223,7 @@ PR → GitHub Actions: lint → unit tests → SonarQube gate → build → Triv
 - Policy as code: Gatekeeper/Kyverno (no `latest` tags, resource limits required,
   no privileged pods) — with a scenario where a policy blocks an emergency deploy.
 - NetworkPolicies default-deny; Istio AuthorizationPolicies; mTLS strict.
-- **Compliance sim:** a lightweight "MER-SOC2/PCI" audit framework with evidence-collection
+- **Compliance sim:** a lightweight "SCG-SOC2/PCI" audit framework with evidence-collection
   exercises and a failed-audit incident scenario.
 
 ### 5.5 Disaster Recovery & Resilience
@@ -238,18 +241,18 @@ PR → GitHub Actions: lint → unit tests → SonarQube gate → build → Triv
 
 ```
 ┌──────────────────────────── aiops/ ────────────────────────────┐
-│  meridian-mcp-server  ── exposes tools to any MCP client:      │
+│  abhyas-mcp-server  ── exposes tools to any MCP client:      │
 │    get_alerts, query_promql, query_logs(LogQL), get_traces,    │
 │    kubectl_read, argo_status, tf_plan_summary, runbook_search  │
 │                                                                │
-│  incident-copilot     ── on page: pulls alerts+logs+traces,    │
+│  abhigya-copilot      ── on page: pulls alerts+logs+traces,    │
 │    drafts incident summary + ranked hypotheses + next commands │
 │  deploy-validator     ── canary metric diff → natural-language │
 │    risk assessment posted to the promotion gate                │
 │  runbook-generator    ── drafts runbooks from resolved         │
 │    incidents; humans review via PR (human-in-the-loop always)  │
 │  cost-analyst         ── weekly spend anomaly report + rightsizing PRs │
-│  chatops-bot          ── /meridian diagnose checkout-service   │
+│  chatops-bot          ── /abhyas diagnose checkout-service   │
 └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -269,8 +272,8 @@ MCP server as a graded ticket) → evaluate them (agent eval harness against rep
 
 Every unit of work arrives as a corporate artifact, never as a lesson:
 
-- **JIRA-style tickets** (`MER-1042`) with acceptance criteria, story points, sprint context
-- **Incidents** (`INC-2026-0117`) delivered by `meridianctl scenario start <id>`, which
+- **JIRA-style tickets** (`ABH-1042`) with acceptance criteria, story points, sprint context
+- **Incidents** (`INC-2026-0117`) delivered by `abhyasctl scenario start <id>`, which
   injects the actual fault into your running environment and starts the pager
 - **Change Requests** with CAB-style approval templates and rollback plans
 - **RCA assignments** with the blameless postmortem template (timeline, contributing
@@ -283,7 +286,7 @@ Every unit of work arrives as a corporate artifact, never as a lesson:
 ```
 scenarios/incidents/INC-kafka-consumer-lag-storm/
 ├── ticket.md            # what the pager/customer says (symptoms only)
-├── inject.sh            # meridianctl hook that creates the real fault
+├── inject.sh            # abhyasctl hook that creates the real fault
 ├── walkthrough.md       # SPOILER-gated: investigation path, exact commands,
 │                        #   the logs/metrics/traces you should have found
 ├── rca-reference.md     # model RCA: root cause, resolution, prevention
@@ -317,12 +320,12 @@ runbooks + docs/ADRs + interview-handbook chapter. **A milestone is done only wh
 | # | Milestone | Core deliverables | Scenarios | Exit criteria (sample) |
 |---|---|---|---|---|
 | 0 | **Blueprint** (this doc) | Architecture, roadmap, repo scaffolding, CONTRIBUTING, coding standards, ADR-0001..0005 | — | Repo public, CI green on empty scaffold |
-| 1 | **Foundations: Linux, Git, Bash** | `meridianctl` v0, dev container, Ansible-provisioned "legacy VM" lab | 12 (broken services, disk pressure, perms, cron, systemd) | Learner can triage a broken VM to green in <30 min |
+| 1 | **Foundations: Linux, Git, Bash** | `abhyasctl` v0, dev container, Ansible-provisioned "legacy VM" lab | 12 (broken services, disk pressure, perms, cron, systemd) | Learner can triage a broken VM to green in <30 min |
 | 2 | **Containers & first service** | `catalog-service` + `cart-service`, hardened multi-stage Dockerfiles, compose dev env | 10 (OOM kills, zombie procs, layer bloat, registry auth) | Images <200MB, non-root, Trivy clean |
 | 3 | **Kubernetes core (kind)** | All core services on kind, Kustomize bases/overlays, probes, resources, HPA | 20 (CrashLoopBackOff taxonomy, DNS, probes-lie scenarios, evictions) | Full app serves checkout on kind |
 | 4 | **CI (GitHub Actions + Jenkins legacy)** | Full PR pipeline, SonarQube, Trivy gates, ephemeral integration envs | 12 (flaky tests, cache poisoning, broken gate, secret leak in logs) | PR-to-signed-image <10 min |
 | 5 | **Terraform & GCP landing zone** | Network, GKE, IAM, Artifact Registry modules; state mgmt; OpenTofu parity | 15 (state lock, drift, destroy-protection saves, IAM propagation) | `terraform plan` clean on all envs; policy checks enforced |
-| 6 | **GitOps (Argo CD) + Helm** | meridian-gitops repo live, app-of-apps, Argo Rollouts canary | 14 (sync loops, drift, pruning disasters, helm hook failures) | Zero kubectl-apply to prod; canary auto-aborts on SLO breach |
+| 6 | **GitOps (Argo CD) + Helm** | abhyas-gitops repo live, app-of-apps, Argo Rollouts canary | 14 (sync loops, drift, pruning disasters, helm hook failures) | Zero kubectl-apply to prod; canary auto-aborts on SLO breach |
 | 7 | **Observability** | Prom/Thanos, Loki, OTel+Jaeger, SLOs-as-code, dashboards-as-code, pager sim | 15 (alert storm, cardinality explosion, sampling lies, silent SLO burn) | Multi-burn-rate alerts fire correctly in injected burn test |
 | 8 | **Data & events** | Kafka (Strimzi), RabbitMQ, Postgres HA, Redis, Mongo; saga checkout flow | 25 (consumer lag, rebalance storms, poison msgs, replica lag, failover) | Checkout survives broker-node kill with zero lost orders |
 | 9 | **Service mesh & traffic** | Istio, mTLS strict, circuit breaking, fault injection as chaos engine | 14 (sidecar OOM, mTLS cert expiry, retry storms, 503 taxonomies) | Region-internal p99 overhead <10 ms documented |
@@ -347,11 +350,11 @@ milestones (e.g., Milestone 11's best scenarios break things built in 5, 6, and 
   **scenario tests** — every `inject.sh`/`grade.sh` pair runs in a weekly CI matrix so
   scenarios never rot (the #1 killer of learning repos).
 - **Versioning:** SemVer per milestone; conventional commits; release notes automated;
-  `main` always deployable to kind in one command (`meridianctl up`).
+  `main` always deployable to kind in one command (`abhyasctl up`).
 - **Contribution:** CONTRIBUTING.md, scenario-authoring guide + template (the community
   growth engine — contributors add scenarios, the highest-leverage contribution type),
   CODEOWNERS, security policy with private disclosure path.
-- **Handbooks:** Operations Handbook (how Meridian runs prod), On-Call Handbook
+- **Handbooks:** Operations Handbook (how SCG runs prod), On-Call Handbook
   (escalation, comms templates, IC role), Interview Handbook (grows one chapter per milestone).
 
 ## 10. Success Metrics
@@ -364,7 +367,7 @@ milestones (e.g., Milestone 11's best scenarios break things built in 5, 6, and 
 
 ---
 
-*Next step: Milestone 0 completion — repo scaffolding, `meridianctl` skeleton, ADRs 0001–0005
+*Next step: Milestone 0 completion — repo scaffolding, `abhyasctl` skeleton, ADRs 0001–0005
 (monorepo strategy, GitOps repo separation, local-first principle, polyglot service choices,
 AI Ops read-only principle), and the scenario template. Then Milestone 1 kicks off with
-sprint MER-Sprint-1 and its first 12 tickets.*
+sprint ABH-Sprint-1 and its first 12 tickets.*

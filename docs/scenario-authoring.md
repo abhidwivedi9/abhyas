@@ -1,13 +1,13 @@
 # Scenario Authoring Guide
 
-Scenarios are Meridian's product. This guide is the contract every scenario
+Scenarios are Abhyas's product. This guide is the contract every scenario
 must meet. Start by copying `scenarios/TEMPLATE/`.
 
 ## The six files (+ metadata)
 
 | File | Purpose | Hard rules |
 |---|---|---|
-| `scenario.yaml` | metadata for `meridianctl` + CI | valid tier/category/milestone |
+| `scenario.yaml` | metadata for `abhyasctl` + CI | valid tier/category/milestone |
 | `ticket.md` | what the pager/customer says | **symptoms only** — no root cause anywhere |
 | `inject.sh` | creates the real fault | idempotent, sandbox-only, observable via telemetry |
 | `walkthrough.md` | spoiler-gated investigation path | exact commands + expected output, `<details>` gates |
@@ -40,6 +40,6 @@ must meet. Start by copying `scenarios/TEMPLATE/`.
 ## Naming
 
 - Incidents: `scenarios/incidents/INC-<short-slug>/`
-- Project tickets: `scenarios/tickets/MER-<short-slug>/`
+- Project tickets: `scenarios/tickets/ABH-<short-slug>/`
 - Slugs describe the *mechanism*, not the symptom (the directory name is a
-  spoiler surface learners only see after starting via `meridianctl`).
+  spoiler surface learners only see after starting via `abhyasctl`).

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # inject.sh — creates the REAL fault for this scenario.
-# Invoked by: meridianctl scenario start <scenario-id>
+# Invoked by: abhyasctl scenario start <scenario-id>
 #
 # Contract:
 #   - Must be idempotent (safe to run twice).
@@ -12,7 +12,7 @@
 set -euo pipefail
 
 SCENARIO_ID="TEMPLATE"
-NAMESPACE="${MERIDIAN_NAMESPACE:-meridian}"
+NAMESPACE="${ABHYAS_NAMESPACE:-scg}"
 
 echo "[inject:${SCENARIO_ID}] injecting fault into namespace ${NAMESPACE}..."
 

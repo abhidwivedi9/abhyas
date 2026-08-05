@@ -15,18 +15,18 @@ and CD bots that commit image-digest bumps without touching app history.
 
 ## Decision
 
-A dedicated repository, `meridian-gitops/`, is the **only** thing Argo CD
+A dedicated repository, `abhyas-gitops/`, is the **only** thing Argo CD
 watches. Structure:
 
 ```
-meridian-gitops/
+abhyas-gitops/
 ├── clusters/{dev,staging,prod-usc1,prod-euw1}/
 ├── apps/        # per-service overlays, image tags pinned by CI
 └── platform/    # addons: monitoring, mesh, secrets, policies
 ```
 
 CI in the monorepo builds and signs images, then opens a PR against
-`meridian-gitops` bumping the image digest. Humans (or automation with
+`abhyas-gitops` bumping the image digest. Humans (or automation with
 policy gates) merge; Argo CD syncs.
 
 ## Consequences

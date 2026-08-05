@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""meridianctl — the Meridian platform CLI.
+"""abhyasctl — the Abhyas platform CLI.
 
 Milestone 0 skeleton: command surface and scenario discovery only.
 Cluster bring-up (`up`) lands in Milestone 3; the pager sim in Milestone 7.
@@ -44,7 +44,7 @@ def find_scenario(scenario_id: str) -> Path:
     for path in discover_scenarios():
         if path.name == scenario_id:
             return path
-    sys.exit(f"error: scenario '{scenario_id}' not found (try: meridianctl scenario list)")
+    sys.exit(f"error: scenario '{scenario_id}' not found (try: abhyasctl scenario list)")
 
 
 def run_script(script: Path) -> int:
@@ -54,12 +54,12 @@ def run_script(script: Path) -> int:
 # --- commands -----------------------------------------------------------------
 
 def cmd_up(args: argparse.Namespace) -> int:
-    print("meridianctl up: not implemented yet — lands in Milestone 3 (Kubernetes core).")
+    print("abhyasctl up: not implemented yet — lands in Milestone 3 (Kubernetes core).")
     return 2
 
 
 def cmd_down(args: argparse.Namespace) -> int:
-    print("meridianctl down: not implemented yet — lands in Milestone 3.")
+    print("abhyasctl down: not implemented yet — lands in Milestone 3.")
     return 2
 
 
@@ -105,16 +105,16 @@ def cmd_scenario_verify(args: argparse.Namespace) -> int:
 
 
 def cmd_pager(args: argparse.Namespace) -> int:
-    print("meridianctl pager: not implemented yet — lands in Milestone 7 (Observability).")
+    print("abhyasctl pager: not implemented yet — lands in Milestone 7 (Observability).")
     return 2
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="meridianctl",
-        description="Operate the Meridian production simulator.",
+        prog="abhyasctl",
+        description="Operate Abhyas, the SCG production simulator.",
     )
-    parser.add_argument("--version", action="version", version=f"meridianctl {__version__}")
+    parser.add_argument("--version", action="version", version=f"abhyasctl {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_up = sub.add_parser("up", help="bring up the full stack on kind (Milestone 3)")

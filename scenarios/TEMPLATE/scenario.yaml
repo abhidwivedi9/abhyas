@@ -1,4 +1,4 @@
-# Scenario metadata — consumed by meridianctl and the CI scenario matrix.
+# Scenario metadata — consumed by abhyasctl and the CI scenario matrix.
 id: TEMPLATE                 # e.g. INC-kafka-consumer-lag-storm
 title: "<symptom-only title>"
 kind: incident               # incident | ticket | change-request | game-day

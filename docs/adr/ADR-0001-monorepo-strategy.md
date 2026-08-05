@@ -5,7 +5,7 @@
 
 ## Context
 
-Meridian spans ~11 microservices, IaC, CI/CD definitions, observability config,
+Abhyas spans ~11 microservices, IaC, CI/CD definitions, observability config,
 security tooling, AI Ops components, and a 200+ scenario catalog. We must choose
 between one repository, per-service repositories, or a hybrid.
 
@@ -16,7 +16,7 @@ skew, cross-repo PRs, N× CI setup) buys us nothing at this scale.
 
 ## Decision
 
-A single monorepo (`meridian/`) holds application source, platform code, CI
+A single monorepo (`abhyas/`) holds application source, platform code, CI
 definitions, observability, security, AI Ops, scenarios, runbooks, and docs.
 Top-level layout is fixed in §5.1 of the architecture doc.
 

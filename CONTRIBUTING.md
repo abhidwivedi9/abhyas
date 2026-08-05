@@ -1,4 +1,4 @@
-# Contributing to Project Meridian
+# Contributing to Project Abhyas
 
 Thanks for helping build the production simulator. Contributions of every kind
 are welcome, but **scenarios are the highest-leverage contribution** — they are
@@ -7,7 +7,7 @@ the product.
 ## Ground rules
 
 - **Conventional commits** (`feat:`, `fix:`, `docs:`, `scenario:`, `chore:`).
-- `main` must always be deployable to kind in one command (`meridianctl up`,
+- `main` must always be deployable to kind in one command (`abhyasctl up`,
   from Milestone 3 onward).
 - Every component change ships with docs; every significant decision gets an ADR
   in `docs/adr/`.
@@ -17,7 +17,7 @@ the product.
 ## Contributing a scenario
 
 1. Copy `scenarios/TEMPLATE/` to `scenarios/incidents/INC-<short-slug>/` (or
-   `scenarios/tickets/MER-<short-slug>/` for project-style work).
+   `scenarios/tickets/ABH-<short-slug>/` for project-style work).
 2. Fill in all six files — `ticket.md`, `inject.sh`, `walkthrough.md`,
    `rca-reference.md`, `interview.md`, `grade.sh`.
 3. Symptoms only in `ticket.md`. The learner should never see the root cause
