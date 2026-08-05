@@ -1,0 +1,12 @@
+# Normalize line endings: LF in repo and working tree for everything that
+# executes or is parsed on Linux (contributors on Windows included).
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+
+# Binary assets (none yet — keep scenario assets text-based per ADR-0001)
+*.png binary
+*.jpg binary

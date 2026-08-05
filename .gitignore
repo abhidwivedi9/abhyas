@@ -1,0 +1,26 @@
+# Claude Code local state
+.claude.json
+.claude/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars          # env-specific values; commit *.tfvars.example instead
+crash.log
+
+# Editors / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+*.log

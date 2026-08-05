@@ -1,0 +1,11 @@
+# Route reviews by area. Replace placeholders with real teams/handles as the
+# maintainer group forms (Milestone 0 has a single owner).
+* @meridian-maintainers
+
+/apps/                  @meridian-maintainers
+/platform/terraform/    @meridian-maintainers
+/platform/policies/     @meridian-maintainers
+/security/              @meridian-maintainers
+/aiops/                 @meridian-maintainers
+/scenarios/             @meridian-maintainers
+/docs/adr/              @meridian-maintainers

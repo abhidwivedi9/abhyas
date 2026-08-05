@@ -1,0 +1,14 @@
+# Scenario metadata — consumed by meridianctl and the CI scenario matrix.
+id: TEMPLATE                 # e.g. INC-kafka-consumer-lag-storm
+title: "<symptom-only title>"
+kind: incident               # incident | ticket | change-request | game-day
+tier: L2                     # L1 | L2 | L3 | L4
+role: sre-oncall             # platform-engineer | sre-oncall | devops-engineer | cloud-architect | incident-commander
+category: kubernetes         # see §7.3 of the architecture doc
+requires_milestone: 3        # lowest milestone whose stack this scenario needs
+environments: [kind, gke]    # where inject/grade are supported
+time_box_minutes: 60
+severity: sev2               # incidents only
+interview_tags:
+  - "debugging-503s"
+  - "system-design-caching"

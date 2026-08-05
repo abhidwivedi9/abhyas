@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint & structural checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python syntax check
+        run: python -m compileall tools/
+
+      - name: meridianctl smoke test
+        run: |
+          python tools/meridianctl/meridianctl.py --version
+          python tools/meridianctl/meridianctl.py scenario list
+
+      - name: Scenario structural verification
+        run: python tools/meridianctl/meridianctl.py scenario verify
+
+      - name: Shellcheck scenario scripts
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q shellcheck
+          find scenarios -name '*.sh' -print0 | xargs -0 -r shellcheck -S warning
+
+  docs:
+    name: Docs checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Markdown link check
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --offline './**/*.md'
+          fail: true
+
+# Future (per roadmap):
+#   - Milestone 2+: per-service build/test matrix with path filtering (ADR-0001)
+#   - Milestone 3+: ephemeral kind cluster integration tests, `meridianctl up` smoke
+#   - weekly scenario matrix: inject -> grade-must-fail -> reference fix -> grade-must-pass
