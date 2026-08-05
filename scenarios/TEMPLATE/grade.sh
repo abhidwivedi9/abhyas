@@ -23,7 +23,7 @@ pass() { echo "[grade:${SCENARIO_ID}] PASS: $*"; }
 #    e.g. verify the deployment's memory limit, the NetworkPolicy, the
 #    Kafka consumer group lag — whatever inject.sh broke
 # 3. No collateral damage (the "fix" didn't disable the feature/policy):
-fail "TODO: implement grading checks"
+fail "TODO: implement grading checks against namespace ${NAMESPACE}"
 # ------------------------------------------------------------------------------
 
 pass "fault remediated and root cause verified"
