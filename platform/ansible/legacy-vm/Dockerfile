@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
         systemd systemd-sysv \
         cron rsyslog openssh-server logrotate \
-        python3 sudo iproute2 procps \
+        python3 sudo iproute2 procps e2fsprogs \
         vim less curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     # Strip units systemd would otherwise fail to start in a container

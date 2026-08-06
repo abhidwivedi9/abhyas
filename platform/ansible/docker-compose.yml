@@ -11,9 +11,11 @@ services:
     tmpfs:
       - /run
       - /run/lock
-      # Small size-capped volume so INC-heartbeat-disk-full can produce a
-      # genuine ENOSPC in seconds without a slow, large `dd` write.
-      - /var/log/heartbeat:size=10m
+      # /var/log/heartbeat is NOT tmpfs: under Docker Desktop's WSL2
+      # backend, tmpfs size limits weren't reliably enforced for small
+      # appends near capacity (INC-heartbeat-disk-full kept "succeeding"
+      # for minutes past supposed exhaustion). Ansible instead loop-mounts
+      # a real small ext4 image there, which enforces ENOSPC precisely.
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
     restart: unless-stopped

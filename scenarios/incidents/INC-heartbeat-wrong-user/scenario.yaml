@@ -1,0 +1,13 @@
+id: INC-heartbeat-wrong-user
+title: "Heartbeat failing to start after a config change"
+kind: incident
+tier: L1
+role: sre-oncall
+category: linux-systemd
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 20
+severity: sev2
+interview_tags:
+  - "systemd-exec-error-codes"
+  - "reading-unit-files"

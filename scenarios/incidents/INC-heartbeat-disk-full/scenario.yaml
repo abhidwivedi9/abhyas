@@ -1,0 +1,13 @@
+id: INC-heartbeat-disk-full
+title: "Heartbeat health check green, but on-call suspects it's actually stuck"
+kind: incident
+tier: L2
+role: sre-oncall
+category: disk-pressure
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 25
+severity: sev2
+interview_tags:
+  - "disk-pressure-debugging"
+  - "health-checks-that-lie"

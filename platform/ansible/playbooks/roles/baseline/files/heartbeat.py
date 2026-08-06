@@ -34,7 +34,14 @@ class Health(http.server.BaseHTTPRequestHandler):
         pass  # keep stdout quiet; heartbeat.log is the real signal
 
 
+class Server(socketserver.TCPServer):
+    # Scenarios restart this service under systemd repeatedly, often via
+    # SIGKILL — without this, a killed process leaves the port in TIME_WAIT
+    # and blocks the next bind with "Address already in use" for ~60s.
+    allow_reuse_address = True
+
+
 if __name__ == "__main__":
     threading.Thread(target=beat, daemon=True).start()
-    with socketserver.TCPServer(("0.0.0.0", 8080), Health) as httpd:
+    with Server(("0.0.0.0", 8080), Health) as httpd:
         httpd.serve_forever()

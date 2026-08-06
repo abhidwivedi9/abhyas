@@ -12,6 +12,34 @@
     home: /opt/heartbeat
     create_home: false
 
+- name: Stop heartbeat before rebuilding its log filesystem (avoid writing to a device being reformatted)
+  ansible.builtin.systemd:
+    name: heartbeat
+    state: stopped
+  failed_when: false
+
+- name: Unmount /var/log/heartbeat if currently mounted (guarantee a clean baseline every convergence)
+  ansible.builtin.command: umount /var/log/heartbeat
+  failed_when: false
+  changed_when: false
+
+- name: Recreate the backing disk image for /var/log/heartbeat (disk-pressure scenarios need a real, small, precisely-enforced filesystem)
+  ansible.builtin.command: dd if=/dev/zero of=/var/lib/heartbeat-disk.img bs=1M count=8
+  changed_when: true
+
+- name: Format the backing disk image as ext4
+  ansible.builtin.command: mkfs.ext4 -q -F /var/lib/heartbeat-disk.img
+  changed_when: true
+
+- name: Ensure /var/log/heartbeat mount point exists
+  ansible.builtin.file:
+    path: /var/log/heartbeat
+    state: directory
+
+- name: Mount the heartbeat disk image via loop device
+  ansible.builtin.command: mount -o loop /var/lib/heartbeat-disk.img /var/log/heartbeat
+  changed_when: true
+
 - name: Create app and log directories
   ansible.builtin.file:
     path: "{{ item.path }}"
