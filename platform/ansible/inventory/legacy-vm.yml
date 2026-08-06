@@ -1,0 +1,16 @@
+# Inventory: tells Ansible WHERE the legacy VM is and HOW to reach it.
+# ansible_connection: community.docker.docker means "run commands inside
+# this container" instead of "ssh to this IP" — same playbooks would work
+# unchanged against a real VM later, just by swapping the connection plugin.
+all:
+  hosts:
+    legacy-vm:
+      # docker connection plugin execs by CONTAINER NAME, not inventory
+      # hostname — must match docker-compose.yml's container_name exactly.
+      ansible_host: abhyas-legacy-vm
+      ansible_connection: community.docker.docker
+      ansible_docker_extra_args: ""
+      ansible_python_interpreter: /usr/bin/python3
+      # docker exec doesn't reliably set $HOME, so ~ expansion in Ansible's
+      # tmp-dir bootstrap can fail; pin an explicit path instead.
+      ansible_remote_tmp: /tmp/.ansible-remote

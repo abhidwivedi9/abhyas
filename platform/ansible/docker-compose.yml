@@ -1,0 +1,24 @@
+# Milestone 1 local lab: one "legacy VM" target + one Ansible control node.
+# Driven by `abhyasctl up`/`down` (tools/abhyasctl/abhyasctl.py), or run
+# directly — see platform/ansible/README.md.
+services:
+  legacy-vm:
+    build: ./legacy-vm
+    container_name: abhyas-legacy-vm
+    hostname: legacy-vm
+    privileged: true          # systemd needs this to manage its own cgroups
+    cgroup: host
+    tmpfs:
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    restart: unless-stopped
+
+  ansible-control:
+    build: ./control
+    image: abhyas-ansible-control
+    profiles: ["tools"]       # never auto-starts; abhyasctl invokes it as a one-shot
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock

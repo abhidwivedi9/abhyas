@@ -1,0 +1,13 @@
+[Unit]
+Description=Heartbeat demo service (Milestone 1 scenario target)
+After=network.target
+
+[Service]
+Type=simple
+User=heartbeat
+ExecStart=/usr/bin/python3 /opt/heartbeat/heartbeat.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

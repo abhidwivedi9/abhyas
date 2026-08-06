@@ -1,0 +1,8 @@
+---
+# Entry point: converges legacy-vm to the healthy baseline.
+# Run via: abhyasctl up   (or directly, see platform/ansible/README.md)
+- name: Converge legacy VM to baseline
+  hosts: legacy-vm
+  gather_facts: true
+  roles:
+    - baseline

@@ -1,0 +1,83 @@
+---
+# Converges legacy-vm to the "healthy" baseline: a dedicated service user,
+# the heartbeat app, its systemd unit, a cron job, and log rotation.
+# Scenarios in scenarios/incidents/ start from this state and break one
+# piece of it at a time.
+
+- name: Create heartbeat service user
+  ansible.builtin.user:
+    name: heartbeat
+    system: true
+    shell: /usr/sbin/nologin
+    home: /opt/heartbeat
+    create_home: false
+
+- name: Create app and log directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: "0755"
+  loop:
+    - { path: /opt/heartbeat, owner: heartbeat }
+    - { path: /var/log/heartbeat, owner: heartbeat }
+
+- name: Install heartbeat app
+  ansible.builtin.copy:
+    src: heartbeat.py
+    dest: /opt/heartbeat/heartbeat.py
+    owner: heartbeat
+    group: heartbeat
+    mode: "0755"
+
+- name: Install heartbeat systemd unit
+  ansible.builtin.template:
+    src: heartbeat.service.j2
+    dest: /etc/systemd/system/heartbeat.service
+    mode: "0644"
+  register: unit_file
+
+- name: Reload systemd if unit changed
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: unit_file.changed
+
+- name: Enable and start heartbeat service
+  ansible.builtin.systemd:
+    name: heartbeat
+    enabled: true
+    state: started
+
+- name: Install daily report cron script
+  ansible.builtin.copy:
+    src: daily_report.sh
+    dest: /opt/heartbeat/daily_report.sh
+    owner: heartbeat
+    group: heartbeat
+    mode: "0755"
+
+- name: Install cron job for daily report
+  ansible.builtin.cron:
+    name: "heartbeat daily report"
+    user: heartbeat
+    minute: "*/5"
+    job: "/opt/heartbeat/daily_report.sh"
+
+- name: Install logrotate policy
+  ansible.builtin.template:
+    src: heartbeat.logrotate.j2
+    dest: /etc/logrotate.d/heartbeat
+    mode: "0644"
+
+- name: Enable and start cron
+  ansible.builtin.systemd:
+    name: cron
+    enabled: true
+    state: started
+
+- name: Enable and start rsyslog
+  ansible.builtin.systemd:
+    name: rsyslog
+    enabled: true
+    state: started

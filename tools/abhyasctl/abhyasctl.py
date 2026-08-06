@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
 """abhyasctl — the Abhyas platform CLI.
 
-Milestone 0 skeleton: command surface and scenario discovery only.
-Cluster bring-up (`up`) lands in Milestone 3; the pager sim in Milestone 7.
-Stdlib-only by design so it runs anywhere Python 3.10+ does.
+Milestone 1: `up`/`down` drive the legacy-vm lab (platform/ansible/) — a
+systemd-in-Docker box converged to its baseline by Ansible. Milestone 3
+extends `up` to also bring up the kind cluster. Stdlib-only on the Python
+side; docker/docker-compose are the only external dependencies, matching
+the local-first principle (ADR-0003) — no Vagrant/VirtualBox required.
 """
 from __future__ import annotations
 
 import argparse
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 __version__ = "0.1.0"
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCENARIOS_DIR = REPO_ROOT / "scenarios"
+ANSIBLE_DIR = REPO_ROOT / "platform" / "ansible"
+COMPOSE_FILE = ANSIBLE_DIR / "docker-compose.yml"
+LEGACY_VM_CONTAINER = "abhyas-legacy-vm"
 
 REQUIRED_SCENARIO_FILES = [
     "scenario.yaml",
@@ -53,14 +59,58 @@ def run_script(script: Path) -> int:
 
 # --- commands -----------------------------------------------------------------
 
+def compose(*args: str) -> int:
+    return subprocess.call(["docker", "compose", "-f", str(COMPOSE_FILE), *args])
+
+
+def wait_for_systemd(container: str, timeout: int = 30) -> bool:
+    """Poll until the container's systemd PID 1 answers, so Ansible isn't
+    racing container startup."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        result = subprocess.run(
+            ["docker", "exec", container, "systemctl", "is-system-running"],
+            capture_output=True, text=True,
+        )
+        # "running" or "degraded" both mean systemd is up and answering;
+        # only a hard failure to exec means it's not ready yet.
+        if result.returncode in (0, 1):
+            return True
+        time.sleep(1)
+    return False
+
+
 def cmd_up(args: argparse.Namespace) -> int:
-    print("abhyasctl up: not implemented yet — lands in Milestone 3 (Kubernetes core).")
-    return 2
+    print("[up] building legacy-vm and ansible-control images...")
+    if compose("build", "legacy-vm", "ansible-control") != 0:
+        return 1
+
+    print("[up] starting legacy-vm (systemd-in-Docker, no VirtualBox/Vagrant needed)...")
+    if compose("up", "-d", "legacy-vm") != 0:
+        return 1
+
+    print("[up] waiting for systemd inside legacy-vm to come up...")
+    if not wait_for_systemd(LEGACY_VM_CONTAINER):
+        print("error: legacy-vm's systemd never became ready", file=sys.stderr)
+        return 1
+
+    print("[up] converging legacy-vm to baseline with Ansible...")
+    rc = compose(
+        "run", "--rm", "ansible-control",
+        "-i", "inventory/legacy-vm.yml", "playbooks/site.yml",
+    )
+    if rc != 0:
+        return rc
+
+    print("[up] done. legacy-vm is healthy and running the heartbeat service.")
+    print(f"     shell in with:  docker exec -it {LEGACY_VM_CONTAINER} bash")
+    print("     start a scenario with:  abhyasctl scenario start <id>")
+    return 0
 
 
 def cmd_down(args: argparse.Namespace) -> int:
-    print("abhyasctl down: not implemented yet — lands in Milestone 3.")
-    return 2
+    print("[down] stopping and removing the legacy-vm lab...")
+    return compose("down", "-v")
 
 
 def cmd_scenario_list(args: argparse.Namespace) -> int:
@@ -117,9 +167,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"abhyasctl {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_up = sub.add_parser("up", help="bring up the full stack on kind (Milestone 3)")
+    p_up = sub.add_parser("up", help="bring up the legacy-vm lab (Milestone 1); extends to kind in Milestone 3")
     p_up.set_defaults(func=cmd_up)
-    p_down = sub.add_parser("down", help="tear down the local stack (Milestone 3)")
+    p_down = sub.add_parser("down", help="tear down the local lab")
     p_down.set_defaults(func=cmd_down)
 
     p_scenario = sub.add_parser("scenario", help="run and grade scenarios")
