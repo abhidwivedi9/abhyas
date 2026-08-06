@@ -2,7 +2,7 @@
   "milestones": [
     {"id": 0, "name": "Blueprint & scaffolding", "status": "done"},
     {"id": 1, "name": "Foundations: Linux, Git, Bash", "status": "done", "scenarios_done": 12, "scenarios_total": 12},
-    {"id": 2, "name": "Containers & first service", "status": "pending"},
+    {"id": 2, "name": "Containers & first service", "status": "in_progress", "scenarios_done": 0, "scenarios_total": 10},
     {"id": 3, "name": "Kubernetes core (kind)", "status": "pending"},
     {"id": 4, "name": "CI (GitHub Actions + Jenkins legacy)", "status": "pending"},
     {"id": 5, "name": "Terraform & GCP landing zone", "status": "pending"},

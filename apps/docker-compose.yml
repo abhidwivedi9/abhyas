@@ -1,0 +1,35 @@
+# Milestone 2 dev environment: the two app services + their real
+# dependency (Redis), wired together. Driven by `abhyasctl up`/`down`
+# (tools/abhyasctl/abhyasctl.py), or run directly from this directory.
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: abhyas-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  cart-service:
+    build: ./cart-service
+    container_name: abhyas-cart-service
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    ports:
+      - "8001:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  catalog-service:
+    build: ./catalog-service
+    container_name: abhyas-catalog-service
+    ports:
+      - "8002:8080"
+    restart: unless-stopped

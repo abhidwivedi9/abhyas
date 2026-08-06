@@ -16,6 +16,8 @@ import shutil
 import subprocess
 import sys
 import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 __version__ = "0.1.0"
@@ -24,6 +26,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCENARIOS_DIR = REPO_ROOT / "scenarios"
 ANSIBLE_DIR = REPO_ROOT / "platform" / "ansible"
 COMPOSE_FILE = ANSIBLE_DIR / "docker-compose.yml"
+APPS_DIR = REPO_ROOT / "apps"
+APPS_COMPOSE_FILE = APPS_DIR / "docker-compose.yml"
 LEGACY_VM_CONTAINER = "abhyas-legacy-vm"
 STATE_FILE = REPO_ROOT / ".abhyas-state.json"
 
@@ -85,8 +89,8 @@ def run_script(script: Path) -> int:
 
 # --- commands -----------------------------------------------------------------
 
-def compose(*args: str) -> int:
-    return subprocess.call(["docker", "compose", "-f", str(COMPOSE_FILE), *args])
+def compose(*args: str, file: Path = COMPOSE_FILE) -> int:
+    return subprocess.call(["docker", "compose", "-f", str(file), *args])
 
 
 def wait_for_systemd(container: str, timeout: int = 30) -> bool:
@@ -102,6 +106,21 @@ def wait_for_systemd(container: str, timeout: int = 30) -> bool:
         # only a hard failure to exec means it's not ready yet.
         if result.returncode in (0, 1):
             return True
+        time.sleep(1)
+    return False
+
+
+def wait_for_http(url: str, timeout: int = 30) -> bool:
+    """Poll a health endpoint until it responds, so `up` doesn't declare
+    victory while a service is still starting."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            with urllib.request.urlopen(url, timeout=2) as resp:
+                if resp.status == 200:
+                    return True
+        except (urllib.error.URLError, OSError):
+            pass
         time.sleep(1)
     return False
 
@@ -128,15 +147,37 @@ def cmd_up(args: argparse.Namespace) -> int:
     if rc != 0:
         return rc
 
+    # `up` brings up the FULL current-milestone stack cumulatively (per
+    # ADR-0003) — Milestone 2's app services join Milestone 1's legacy-vm
+    # lab here, not replace it. Milestone 3 adds a kind cluster the same way.
+    if APPS_COMPOSE_FILE.is_file():
+        print("[up] building and starting Milestone 2 app services (redis, cart-service, catalog-service)...")
+        if compose("up", "-d", "--build", file=APPS_COMPOSE_FILE) != 0:
+            return 1
+        print("[up] waiting for cart-service and catalog-service to answer health checks...")
+        if not wait_for_http("http://127.0.0.1:8001/health"):
+            print("error: cart-service never became healthy", file=sys.stderr)
+            return 1
+        if not wait_for_http("http://127.0.0.1:8002/actuator/health"):
+            print("error: catalog-service never became healthy", file=sys.stderr)
+            return 1
+
     print("[up] done. legacy-vm is healthy and running the heartbeat service.")
     print(f"     shell in with:  docker exec -it {LEGACY_VM_CONTAINER} bash")
     print("     start a scenario with:  abhyasctl scenario start <id>")
+    if APPS_COMPOSE_FILE.is_file():
+        print("     catalog-service: http://localhost:8002/products")
+        print("     cart-service:    http://localhost:8001/cart/<user_id>")
     return 0
 
 
 def cmd_down(args: argparse.Namespace) -> int:
     print("[down] stopping and removing the legacy-vm lab...")
-    return compose("down", "-v")
+    rc = compose("down", "-v")
+    if APPS_COMPOSE_FILE.is_file():
+        print("[down] stopping and removing Milestone 2 app services...")
+        rc = compose("down", "-v", file=APPS_COMPOSE_FILE) or rc
+    return rc
 
 
 def cmd_scenario_list(args: argparse.Namespace) -> int:
@@ -208,7 +249,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"abhyasctl {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_up = sub.add_parser("up", help="bring up the legacy-vm lab (Milestone 1); extends to kind in Milestone 3")
+    p_up = sub.add_parser("up", help="bring up the full stack so far (legacy-vm + app services); extends to kind in Milestone 3")
     p_up.set_defaults(func=cmd_up)
     p_down = sub.add_parser("down", help="tear down the local lab")
     p_down.set_defaults(func=cmd_down)
