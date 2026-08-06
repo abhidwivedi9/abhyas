@@ -1,0 +1,23 @@
+{
+  "name": "Abhyas dev container",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "features": {
+    // Gives the container a docker CLI that talks to the HOST's Docker
+    // Desktop daemon via the mounted socket — abhyasctl shells out to
+    // `docker`/`docker compose`, so this is what makes `abhyasctl up` work
+    // from inside the dev container without running Docker-in-Docker.
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "postCreateCommand": "python tools/abhyasctl/abhyasctl.py --version",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "redhat.ansible",
+        "redhat.vscode-yaml",
+        "timonwong.shellcheck"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}

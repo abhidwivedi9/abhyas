@@ -2,7 +2,7 @@
 
 **The Fortune 500 Production Simulator for DevOps, SRE, Platform Engineering & AI Ops**
 
-> Version 0.1.0 · Milestone 0 (Blueprint) · License: Apache-2.0
+> Version 0.1.0 · Milestone 1 complete · License: Apache-2.0
 
 Abhyas (अभ्यास, *practice*) is an open-source, self-hostable simulation of a
 Fortune 500 production environment: a fictional company — **Sachid Commerce
@@ -64,9 +64,15 @@ is currently firing, checked live against the running lab — see
 | Milestone | Status |
 |---|---|
 | 0 — Blueprint & scaffolding | ✅ done |
-| 1 — Foundations: Linux, Git, Bash | 🔨 in progress — 5/12 scenarios |
+| 1 — Foundations: Linux, Git, Bash | ✅ done — 12/12 scenarios |
 | 2 — Containers & first service | ⏳ |
 | 3+ | see roadmap |
+
+## Interview prep
+
+Every scenario maps to real interview questions — see the
+[Interview Handbook](docs/handbooks/interview-handbook.md), or the
+"Interview Prep" section of `abhyasctl dashboard`.
 
 ## Contributing
 

@@ -29,6 +29,24 @@ STATUS_LABEL = {
     "pending": ("⏳", "pending"),
 }
 
+# One-line "what this trains" per scenario, matching the full Q&A in each
+# scenario's interview.md and compiled in docs/handbooks/interview-handbook.md.
+# Keep this in sync when a new scenario's interview.md is added.
+INTERVIEW_TOPICS = {
+    "INC-heartbeat-crashloop": "Reading a traceback in journalctl; restart-loop signatures",
+    "INC-heartbeat-permission-denied": "OS-level vs. application-level failure",
+    "INC-heartbeat-masked": "systemd mask vs. disable; config as source of truth",
+    "INC-heartbeat-wrong-user": "Reading systemd exit-status codes (217/USER)",
+    "INC-heartbeat-disk-full": "Health checks that lie: liveness vs. actually working",
+    "INC-heartbeat-log-permission-denied": "Recurring incidents & prioritizing prevention",
+    "INC-daily-report-cron-path": "Scheduler environment vs. interactive shell PATH",
+    "INC-daily-report-not-executable": "Exit code 126 vs. 127",
+    "INC-logrotate-misconfigured": "Silent misconfiguration; verifying vs. inspecting",
+    "INC-heartbeat-port-conflict": "Shared-host resource contention; confirm before you kill",
+    "INC-heartbeat-missing-env-file": "Partial/non-atomic rollouts",
+    "INC-heartbeat-bad-dependency": "systemd Requires= vs Wants=; dependency audits",
+}
+
 
 def read_state() -> dict:
     if STATE_FILE.is_file():
@@ -130,6 +148,17 @@ def build_html() -> str:
           <td>{badge}</td>
         </tr>"""
 
+    # --- Interview / RCA Q&A prep table -------------------------------------
+    qa_rows = ""
+    for path, meta in scenarios:
+        topic = INTERVIEW_TOPICS.get(path.name, "see interview.md")
+        qa_rows += f"""
+        <tr>
+          <td><code>{path.name}</code></td>
+          <td>{topic}</td>
+          <td><code>scenarios/incidents/{path.name}/interview.md</code></td>
+        </tr>"""
+
     return f"""<!doctype html>
 <html><head>
 <meta charset="utf-8">
@@ -177,6 +206,13 @@ def build_html() -> str:
   <table>
     <tr><th>ID</th><th>Title</th><th>Tier</th><th>Category</th><th>Live Status</th></tr>
     {sc_rows}
+  </table>
+
+  <h2>🎓 Interview Prep (RCA Q&amp;A)</h2>
+  <div class="sub" style="margin-bottom:0.5rem">Full troubleshooting / system-design / behavioral Q&amp;A per scenario — solve it first, then review. Compiled together in <code>docs/handbooks/interview-handbook.md</code>.</div>
+  <table>
+    <tr><th>Scenario</th><th>What it trains</th><th>Full Q&amp;A</th></tr>
+    {qa_rows}
   </table>
 
   <footer>Not the real observability stack — that's Milestone 7 (Prometheus/Grafana). This is a lightweight, honest interim view: every status above is a live check, not simulated data.</footer>
