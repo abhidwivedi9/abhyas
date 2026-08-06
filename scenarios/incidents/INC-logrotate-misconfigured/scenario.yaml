@@ -1,0 +1,13 @@
+id: INC-logrotate-misconfigured
+title: "Audit finding: are heartbeat's logs actually being rotated?"
+kind: incident
+tier: L2
+role: platform-engineer
+category: linux-systemd
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 20
+severity: sev3
+interview_tags:
+  - "logrotate-debugging"
+  - "silent-config-drift"
