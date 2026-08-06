@@ -1,6 +1,15 @@
 [Unit]
 Description=Heartbeat demo service (Milestone 1 scenario target)
 After=network.target
+# Restart-limiting belongs in [Unit], not [Service] (a common mistake —
+# systemd silently ignores it in the wrong section rather than erroring).
+# NOTE: observed NOT to trigger a terminal `failed` state inside this
+# containerized systemd even correctly placed (NRestarts climbs
+# indefinitely) — a platform quirk, not a scenario bug. Scenario grading
+# does not depend on ever reaching `failed`; don't assume it in new
+# scenarios without verifying live first.
+StartLimitIntervalSec=10
+StartLimitBurst=5
 
 [Service]
 Type=simple
@@ -8,11 +17,6 @@ User=heartbeat
 ExecStart=/usr/bin/python3 /opt/heartbeat/heartbeat.py
 Restart=on-failure
 RestartSec=2
-# Explicit restart-limiting (don't rely on system.conf defaults, which vary
-# by distro/version): 5 failures within 10s -> systemd stops trying and the
-# unit lands in a hard `failed` state, deterministically, every time.
-StartLimitIntervalSec=10
-StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target

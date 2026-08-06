@@ -11,6 +11,9 @@ services:
     tmpfs:
       - /run
       - /run/lock
+      # Small size-capped volume so INC-heartbeat-disk-full can produce a
+      # genuine ENOSPC in seconds without a slow, large `dd` write.
+      - /var/log/heartbeat:size=10m
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
     restart: unless-stopped

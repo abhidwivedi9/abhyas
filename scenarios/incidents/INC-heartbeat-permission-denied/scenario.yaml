@@ -1,0 +1,13 @@
+id: INC-heartbeat-permission-denied
+title: "Heartbeat won't start after routine server maintenance"
+kind: incident
+tier: L1
+role: sre-oncall
+category: linux-permissions
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 20
+severity: sev2
+interview_tags:
+  - "linux-file-permissions"
+  - "reading-systemd-exec-errors"

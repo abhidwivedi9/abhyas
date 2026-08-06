@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # and Python (required for Ansible to manage the box at all).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         systemd systemd-sysv \
-        cron rsyslog openssh-server \
+        cron rsyslog openssh-server logrotate \
         python3 sudo iproute2 procps \
         vim less curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \

@@ -1,0 +1,13 @@
+id: INC-heartbeat-masked
+title: "Heartbeat down, restart attempts having no effect"
+kind: incident
+tier: L1
+role: sre-oncall
+category: linux-systemd
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 20
+severity: sev2
+interview_tags:
+  - "systemd-mask-vs-disable"
+  - "config-as-source-of-truth"
