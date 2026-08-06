@@ -25,6 +25,11 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    # Real resource limits, not decorative — Milestone 2 scenarios inject
+    # genuine OOM kills and CPU starvation against these. Sized with
+    # headroom over observed idle usage (~43MB, well under 1 CPU).
+    mem_limit: 128m
+    cpus: 0.5
     restart: unless-stopped
 
   catalog-service:
@@ -32,4 +37,7 @@ services:
     container_name: abhyas-catalog-service
     ports:
       - "8002:8080"
+    # Sized with headroom over observed idle usage (~168MB JVM footprint).
+    mem_limit: 320m
+    cpus: 1.0
     restart: unless-stopped
