@@ -1,0 +1,14 @@
+id: INC-cart-service-zombie-processes
+title: "Cart service process count climbing steadily, no obvious cause"
+kind: incident
+tier: L2
+role: sre-oncall
+category: containers
+requires_milestone: 2
+environments: [compose]
+time_box_minutes: 20
+severity: sev3
+interview_tags:
+  - "zombie-processes"
+  - "pid-1-reaping-responsibility"
+  - "container-process-namespaces"
