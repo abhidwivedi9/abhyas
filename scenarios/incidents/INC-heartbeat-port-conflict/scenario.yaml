@@ -1,0 +1,13 @@
+id: INC-heartbeat-port-conflict
+title: "Heartbeat crash-looping right after another team's deploy on the same host"
+kind: incident
+tier: L2
+role: sre-oncall
+category: linux-systemd
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 20
+severity: sev2
+interview_tags:
+  - "who-is-holding-this-port"
+  - "shared-host-resource-contention"
