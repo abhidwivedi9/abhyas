@@ -10,6 +10,7 @@ the local-first principle (ADR-0003) — no Vagrant/VirtualBox required.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -24,6 +25,7 @@ SCENARIOS_DIR = REPO_ROOT / "scenarios"
 ANSIBLE_DIR = REPO_ROOT / "platform" / "ansible"
 COMPOSE_FILE = ANSIBLE_DIR / "docker-compose.yml"
 LEGACY_VM_CONTAINER = "abhyas-legacy-vm"
+STATE_FILE = REPO_ROOT / ".abhyas-state.json"
 
 REQUIRED_SCENARIO_FILES = [
     "scenario.yaml",
@@ -151,7 +153,15 @@ def cmd_scenario_start(args: argparse.Namespace) -> int:
     path = find_scenario(args.id)
     print(f"Starting scenario {args.id}...")
     print(f"Your ticket: {path / 'ticket.md'}")
-    return run_script(path / "inject.sh")
+    rc = run_script(path / "inject.sh")
+    if rc == 0:
+        # Records which scenario the dashboard should show as the active
+        # incident. Local-only, gitignored — not shared state.
+        STATE_FILE.write_text(json.dumps({
+            "active_scenario": args.id,
+            "started_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        }))
+    return rc
 
 
 def cmd_scenario_grade(args: argparse.Namespace) -> int:
@@ -183,6 +193,13 @@ def cmd_pager(args: argparse.Namespace) -> int:
     return 2
 
 
+def cmd_dashboard(args: argparse.Namespace) -> int:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import dashboard  # noqa: E402 (local import; see sys.path insert above)
+    dashboard.run_dashboard(port=args.port, open_browser=not args.no_browser)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="abhyasctl",
@@ -211,6 +228,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_pager = sub.add_parser("pager", help="the PagerDuty simulator (Milestone 7)")
     p_pager.set_defaults(func=cmd_pager)
+
+    p_dash = sub.add_parser("dashboard", help="local status page: milestone progress + live scenario state")
+    p_dash.add_argument("--port", type=int, default=4000)
+    p_dash.add_argument("--no-browser", action="store_true", help="don't auto-open a browser tab")
+    p_dash.set_defaults(func=cmd_dashboard)
 
     return parser
 

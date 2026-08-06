@@ -41,20 +41,30 @@ docs/           architecture, ADRs, handbooks, interview guide
 tools/          abhyasctl CLI: scenario injector, grader, resets
 ```
 
-## Quick start (Milestone 0)
+## Quick start
+
+Requires Docker Desktop running — nothing else to install (no Vagrant/VirtualBox,
+no cloud account, $0 cost).
 
 ```
-python tools/abhyasctl/abhyasctl.py --help
+python tools/abhyasctl/abhyasctl.py up            # build + start the legacy-vm lab
+python tools/abhyasctl/abhyasctl.py scenario list  # see available scenarios
+python tools/abhyasctl/abhyasctl.py scenario start INC-heartbeat-crashloop
+python tools/abhyasctl/abhyasctl.py dashboard      # live status page, http://localhost:4000
 ```
 
-`abhyasctl up` (one-command kind bring-up) lands in Milestone 3.
+`abhyasctl up` extends to also bring up a `kind` Kubernetes cluster in Milestone 3.
 
 ## Status
 
+Live, real-time view: `abhyasctl dashboard` (milestone progress + which scenario
+is currently firing, checked live against the running lab — see
+[docs/progress.json](docs/progress.json) for the raw data).
+
 | Milestone | Status |
 |---|---|
-| 0 — Blueprint & scaffolding | 🔨 in progress |
-| 1 — Foundations: Linux, Git, Bash | ⏳ |
+| 0 — Blueprint & scaffolding | ✅ done |
+| 1 — Foundations: Linux, Git, Bash | 🔨 in progress — 5/12 scenarios |
 | 2 — Containers & first service | ⏳ |
 | 3+ | see roadmap |
 

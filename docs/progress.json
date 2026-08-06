@@ -1,0 +1,19 @@
+{
+  "milestones": [
+    {"id": 0, "name": "Blueprint & scaffolding", "status": "done"},
+    {"id": 1, "name": "Foundations: Linux, Git, Bash", "status": "in_progress", "scenarios_done": 5, "scenarios_total": 12},
+    {"id": 2, "name": "Containers & first service", "status": "pending"},
+    {"id": 3, "name": "Kubernetes core (kind)", "status": "pending"},
+    {"id": 4, "name": "CI (GitHub Actions + Jenkins legacy)", "status": "pending"},
+    {"id": 5, "name": "Terraform & GCP landing zone", "status": "pending"},
+    {"id": 6, "name": "GitOps (Argo CD) + Helm", "status": "pending"},
+    {"id": 7, "name": "Observability", "status": "pending"},
+    {"id": 8, "name": "Data & events", "status": "pending"},
+    {"id": 9, "name": "Service mesh & traffic", "status": "pending"},
+    {"id": 10, "name": "Security & secrets", "status": "pending"},
+    {"id": 11, "name": "Multi-region & DR", "status": "pending"},
+    {"id": 12, "name": "Performance, capacity, cost", "status": "pending"},
+    {"id": 13, "name": "AI Ops", "status": "pending"},
+    {"id": 14, "name": "Capstone & interview engine", "status": "pending"}
+  ]
+}

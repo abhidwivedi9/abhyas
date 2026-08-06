@@ -7,6 +7,9 @@ __pycache__/
 *.py[cod]
 .venv/
 
+# abhyasctl local session state (which scenario is active) — not shared
+.abhyas-state.json
+
 # Terraform
 **/.terraform/
 *.tfstate
