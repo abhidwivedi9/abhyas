@@ -1,0 +1,13 @@
+id: INC-daily-report-not-executable
+title: "Daily report cron job has stopped producing output"
+kind: incident
+tier: L1
+role: sre-oncall
+category: linux-cron
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 15
+severity: sev3
+interview_tags:
+  - "cron-permission-failures"
+  - "exit-code-126-vs-127"
