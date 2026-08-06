@@ -1,0 +1,13 @@
+id: INC-heartbeat-log-permission-denied
+title: "Heartbeat health check green, but is it actually logging?"
+kind: incident
+tier: L2
+role: sre-oncall
+category: linux-permissions
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 20
+severity: sev2
+interview_tags:
+  - "health-checks-that-lie"
+  - "file-ownership-vs-directory-ownership"
