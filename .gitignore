@@ -6,6 +6,11 @@
 __pycache__/
 *.py[cod]
 .venv/
+.pytest_cache/
+
+# Java / Maven
+target/
+*.class
 
 # abhyasctl local session state (which scenario is active) — not shared
 .abhyas-state.json
