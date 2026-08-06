@@ -1,4 +1,4 @@
-package com.scg.catalog;
+package com.sachidaquatics.catalog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

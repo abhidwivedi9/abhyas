@@ -1,19 +1,24 @@
 # Project Abhyas — Architecture & Roadmap
 
-**The Fortune 500 Production Simulator for DevOps, SRE, Platform Engineering & AI Ops**
+**The Enterprise Production Simulator for DevOps, SRE, Platform Engineering & AI Ops**
 
-> Version 0.1.0 (Design Phase) · License: Apache-2.0 · Status: Milestone 0
+> Version 0.1.0 (Design Phase) · License: Apache-2.0 · Status: Milestone 1 complete, Milestone 2 in progress
 
 ---
 
 ## 1. Executive Summary
 
-Project Abhyas is an open-source, self-hostable simulation of a Fortune 500 production
-environment. It is not a tutorial repository. It is a **fictional company** — Sachid
-Commerce Group (SCG) — with real microservices, real infrastructure-as-code, real CI/CD, real
+Project Abhyas is an open-source, self-hostable simulation of a real production
+environment. It is not a tutorial repository. It is a **company** — Sachid
+Aquatics — with real microservices, real infrastructure-as-code, real CI/CD, real
 GitOps, real observability, real security controls, and a **ticket-driven learning system**
 that makes you operate the platform the way an on-call engineer at Google, Netflix, or
 Uber would.
+
+Abhyas is deliberately dual-purpose: it's built to enterprise standard for training
+value, *and* structured so that if the business case ever becomes real (an actual
+aquarium/aquascaping company), the same codebase is the foundation, not a prototype
+to be thrown away. Nothing about the architecture is dumbed down for either goal.
 
 You don't read about a Kafka partition rebalance storm. You get paged for one at 02:00,
 you triage it with real dashboards and real logs, you write the RCA, and you ship the
@@ -63,25 +68,37 @@ re-verify before publishing):
 
 ---
 
-## 3. The Fictional Company: Sachid Commerce Group
+## 3. The Company: Sachid Aquatics
 
-> **Sachid Commerce Group (SCG)** — *truth-consciousness, as code.*
+> **Sachid (सच्चिद्)** — *sat-chit*, truth-consciousness. Fitting for a discipline
+> that's fundamentally about seeing clearly into what's actually happening.
 
 Realism requires a business. All architecture decisions trace back to these constraints.
 
-**Business:** Global e-commerce + embedded fintech under the **SwarnaPay** brand
-(payments, ledger, fraud). This domain
-is chosen deliberately — it forces the hardest problems: money-grade consistency,
-event-driven flows, PCI-flavored compliance, Black-Friday-style traffic spikes, and
-multi-region availability.
+**Business:** Aquarium, aquascaping, and aquatic-plant e-commerce + marketplace —
+livestock (fish, shrimp, snails), live plants, aquascaping hardscape, equipment
+(filters, CO₂ systems, lighting, heaters), fish food, fertilizers, and a supplier/vendor
+marketplace connecting independent breeders and plant nurseries to customers. Payments,
+ledger, and fraud detection run under the **SwarnaPay** brand. This domain is chosen
+deliberately — it forces genuinely hard problems that map cleanly onto real interview
+topics: **livestock is perishable and time-critical** (a fish order has a real biological
+clock a electronics order never does — this drives shipping SLOs and DR posture with
+actual stakes), inventory is partly *biological* (mortality, quarantine holds, breeding
+cycles — not just stock counters), event-driven flows, PCI-flavored compliance, and
+festival-sale traffic spikes.
 
 **Simulated scale (targets the system is *designed* for, load-tested at reduced scale):**
 
-- 40M monthly active users, 3,000 checkout requests/sec peak (Black Friday scenario)
+- 800K monthly active users, 600 checkout requests/sec peak (Monsoon Aquascaping
+  Festival Sale scenario)
 - 99.95% availability SLO on checkout path (≈ 21.9 min/month error budget)
 - p99 checkout latency SLO: 800 ms; p99 product search SLO: 300 ms
-- Two primary regions (`us-central1`, `europe-west1`) + DR posture for a third
-- ~$180k/month simulated cloud budget (drives cost-optimization scenarios)
+- **Live-fish order SLO is stricter than any other order type**: must clear
+  fulfillment and hand off to logistics within 4 hours of cutoff, RTO 15 min on the
+  fulfillment path — a late live-animal shipment is a welfare failure, not just a
+  business one, and the architecture treats it accordingly
+- Two primary regions (`asia-south1`, `us-central1`) + DR posture for a third
+- ~$45k/month simulated cloud budget (drives cost-optimization scenarios)
 
 **Org simulation:** You rotate through roles — Platform Engineer, SRE on-call, DevOps
 Engineer, Cloud Architect, Incident Commander. Tickets arrive addressed to your current role.
@@ -92,20 +109,25 @@ Engineer, Cloud Architect, Incident Commander. Tickets arrive addressed to your 
 
 ### 4.1 Application Layer — Microservices
 
-Polyglot on purpose (mirrors real enterprises and interview expectations):
+Polyglot on purpose (mirrors real enterprises and interview expectations). Service
+names describe function, not brand — `catalog-service` is Sachid Aquatics' fish
+and aquatic-plant catalog; the technical identifier stays generic because a catalog
+service is a catalog service regardless of what's in it:
 
 | Service | Language / Stack | Purpose | Interesting operational properties |
 |---|---|---|---|
 | `storefront-gateway` | NGINX + Envoy (edge) | API gateway, rate limiting, WAF hooks | TLS termination, cert rotation scenarios |
-| `catalog-service` | Java / Spring Boot | Product catalog, search | JVM tuning, heap/GC incidents, connection pools |
-| `cart-service` | Python / FastAPI | Shopping cart | Redis-backed, cache stampede scenarios |
-| `checkout-service` | Java / Spring Boot | Order orchestration (saga pattern) | Distributed transaction failures, idempotency |
+| `catalog-service` | Java / Spring Boot | Fish, shrimp, snail, and aquatic-plant catalog, search | JVM tuning, heap/GC incidents, connection pools — **built, Milestone 2** |
+| `cart-service` | Python / FastAPI | Shopping cart | Redis-backed, cache stampede scenarios — **built, Milestone 2** |
+| `checkout-service` | Java / Spring Boot | Order orchestration (saga pattern) | Distributed transaction failures, idempotency; live-fish orders get a stricter fulfillment path |
 | `payment-service` | Java / Spring Boot | Payment authorization | PCI-style secrets handling, Vault integration |
 | `ledger-service` | Java / Spring Boot + PostgreSQL | Double-entry ledger | Consistency > availability; failover drills |
-| `inventory-service` | Python | Stock management | Kafka consumer lag incidents, exactly-once semantics |
+| `inventory-service` | Python | Stock management — **biological** for livestock (mortality, quarantine holds, breeding-cycle availability), conventional for hardware/consumables | Kafka consumer lag incidents, exactly-once semantics, dual inventory models |
 | `fraud-service` | Python + Vertex AI | Real-time fraud scoring | ML serving latency, model rollback |
-| `notification-service` | Python | Email/webhook fan-out | RabbitMQ, poison-message handling, DLQs |
-| `recommendation-service` | Python + Vertex AI/Gemini | Personalization | Batch + online serving, feature drift |
+| `notification-service` | Python | Order/shipping notifications, live-fish delivery-window alerts | RabbitMQ, poison-message handling, DLQs |
+| `recommendation-service` | Python + Vertex AI/Gemini | Fish/plant recommendations, tank-compatibility checking, personalization | Batch + online serving, feature drift — powers the **Anshu** customer-facing AI assistant (§6) |
+| `supplier-service` | Python | Vendor/breeder marketplace: listings, supplier onboarding, payouts | Third-party API timeout handling, partner SLAs |
+| `shipping-service` | Python | Logistics, carrier integration, live-animal shipping constraints (oxygen-bag transit windows, temperature) | Time-critical SLAs with real welfare stakes, carrier API flakiness |
 | `loadgen` | Locust/k6 | Synthetic traffic, chaos load profiles | Drives every performance scenario |
 
 ### 4.2 Event Backbone & Data Layer
@@ -223,7 +245,7 @@ PR → GitHub Actions: lint → unit tests → SonarQube gate → build → Triv
 - Policy as code: Gatekeeper/Kyverno (no `latest` tags, resource limits required,
   no privileged pods) — with a scenario where a policy blocks an emergency deploy.
 - NetworkPolicies default-deny; Istio AuthorizationPolicies; mTLS strict.
-- **Compliance sim:** a lightweight "SCG-SOC2/PCI" audit framework with evidence-collection
+- **Compliance sim:** a lightweight "SA-SOC2/PCI" audit framework with evidence-collection
   exercises and a failed-audit incident scenario.
 
 ### 5.5 Disaster Recovery & Resilience
@@ -354,7 +376,7 @@ milestones (e.g., Milestone 11's best scenarios break things built in 5, 6, and 
 - **Contribution:** CONTRIBUTING.md, scenario-authoring guide + template (the community
   growth engine — contributors add scenarios, the highest-leverage contribution type),
   CODEOWNERS, security policy with private disclosure path.
-- **Handbooks:** Operations Handbook (how SCG runs prod), On-Call Handbook
+- **Handbooks:** Operations Handbook (how Sachid Aquatics runs prod), On-Call Handbook
   (escalation, comms templates, IC role), Interview Handbook (grows one chapter per milestone).
 
 ## 10. Success Metrics

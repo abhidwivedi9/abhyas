@@ -11,11 +11,11 @@
     <relativePath/>
   </parent>
 
-  <groupId>com.scg</groupId>
+  <groupId>com.sachidaquatics</groupId>
   <artifactId>catalog-service</artifactId>
   <version>0.1.0</version>
   <name>catalog-service</name>
-  <description>Product catalog API for Sachid Commerce Group</description>
+  <description>Fish and aquatic-plant catalog API for Sachid Aquatics</description>
 
   <properties>
     <java.version>21</java.version>

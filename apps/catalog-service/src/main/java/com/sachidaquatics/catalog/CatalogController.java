@@ -1,4 +1,4 @@
-package com.scg.catalog;
+package com.sachidaquatics.catalog;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

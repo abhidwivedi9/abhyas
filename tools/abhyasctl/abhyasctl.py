@@ -244,7 +244,7 @@ def cmd_dashboard(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="abhyasctl",
-        description="Operate Abhyas, the SCG production simulator.",
+        description="Operate Abhyas, the Sachid Aquatics production simulator.",
     )
     parser.add_argument("--version", action="version", version=f"abhyasctl {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)

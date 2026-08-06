@@ -1,4 +1,4 @@
-"""cart-service — shopping cart API for Sachid Commerce Group.
+"""cart-service — shopping cart API for Sachid Aquatics.
 
 Redis-backed on purpose (per ADR-0004): teaches cache/session-store
 operational patterns (connection handling, TTLs, cache-stampede scenarios

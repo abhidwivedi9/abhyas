@@ -1,14 +1,16 @@
 # Project Abhyas
 
-**The Fortune 500 Production Simulator for DevOps, SRE, Platform Engineering & AI Ops**
+**The Enterprise Production Simulator for DevOps, SRE, Platform Engineering & AI Ops**
 
-> Version 0.1.0 · Milestone 1 complete · License: Apache-2.0
+> Version 0.1.0 · Milestone 1 complete, Milestone 2 in progress · License: Apache-2.0
 
 Abhyas (अभ्यास, *practice*) is an open-source, self-hostable simulation of a
-Fortune 500 production environment: a fictional company — **Sachid Commerce
-Group (SCG)** — *truth-consciousness, as code* — with real microservices, real
-infrastructure-as-code, real CI/CD, real GitOps, real observability, real
-security controls, and a **ticket-driven learning system**.
+real production environment: a company — **Sachid Aquatics** — with real
+microservices, real infrastructure-as-code, real CI/CD, real GitOps, real
+observability, real security controls, and a **ticket-driven learning system**.
+It's dual-purpose by design: an enterprise-depth DevOps/SRE training ground
+*and* a genuine foundation an aquarium/aquascaping business could actually be
+built on later — same codebase, same standards, no shortcuts taken for either goal.
 
 You don't read about a Kafka partition rebalance storm. You get paged for one at
 02:00, triage it with real dashboards and logs, write the RCA, and ship the
@@ -21,10 +23,12 @@ Read the full design: [ARCHITECTURE_AND_ROADMAP.md](ARCHITECTURE_AND_ROADMAP.md)
 | Name | Sanskrit root | What it names |
 |---|---|---|
 | **Abhyas** | अभ्यास — practice through repetition | The platform: this repo, `abhyasctl`, `ABH-` tickets |
-| **Sachid** | सच्चिद् — *sat-chit*, truth-consciousness | The fictional company: Sachid Commerce Group (SCG) |
-| **SwarnaPay** | स्वर्ण — gold | SCG's fintech arm (payments, ledger, fraud) |
+| **Sachid** | सच्चिद् — *sat-chit*, truth-consciousness | The company: Sachid Aquatics |
+| **SwarnaPay** | स्वर्ण — gold | Sachid Aquatics' payments/ledger arm |
 | **Chitaksh** | चित् + अक्ष — the perceiving eye | The observability platform (metrics, logs, traces, SLOs) |
-| **Abhigya** | अभिज्ञ — the knower | The AI Ops incident copilot |
+| **Abhigya** | अभिज्ञ — the knower | The AI Ops incident copilot (engineer-facing) |
+| **Anshu** | अंशु — a ray of light | The customer-facing AI aquarium assistant — recommendations, compatibility, setup guidance |
+| **Kinker** | किंकर — devoted caretaker | The customer-care service and support philosophy |
 
 ## Repository layout
 
@@ -47,7 +51,7 @@ Requires Docker Desktop running — nothing else to install (no Vagrant/VirtualB
 no cloud account, $0 cost).
 
 ```
-python tools/abhyasctl/abhyasctl.py up            # build + start the legacy-vm lab
+python tools/abhyasctl/abhyasctl.py up            # build + start the full stack
 python tools/abhyasctl/abhyasctl.py scenario list  # see available scenarios
 python tools/abhyasctl/abhyasctl.py scenario start INC-heartbeat-crashloop
 python tools/abhyasctl/abhyasctl.py dashboard      # live status page, http://localhost:4000
@@ -65,8 +69,12 @@ is currently firing, checked live against the running lab — see
 |---|---|
 | 0 — Blueprint & scaffolding | ✅ done |
 | 1 — Foundations: Linux, Git, Bash | ✅ done — 12/12 scenarios |
-| 2 — Containers & first service | ⏳ |
+| 2 — Containers & first service | 🔨 in progress |
 | 3+ | see roadmap |
+
+A dedicated **UI milestone** (Customer, Admin, Vendor, Operations, and AI
+Assistant portals) is planned once the backend/platform layers are further
+along — see §11 of the architecture doc.
 
 ## Interview prep
 

@@ -1,4 +1,4 @@
-package com.scg.catalog;
+package com.sachidaquatics.catalog;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,11 +20,16 @@ public class CatalogRepository {
     }
 
     private void seed() {
-        save(new Product("sku-1", "Wireless Mouse", "electronics", 2499));
-        save(new Product("sku-2", "Mechanical Keyboard", "electronics", 8999));
-        save(new Product("sku-3", "USB-C Hub", "electronics", 3499));
-        save(new Product("sku-4", "Standing Desk Mat", "office", 4599));
-        save(new Product("sku-5", "Notebook, ruled", "office", 599));
+        save(new Product("sku-1", "Neon Tetra", "fish", 149));
+        save(new Product("sku-2", "Amano Shrimp", "shrimp", 349));
+        save(new Product("sku-3", "Mystery Snail", "snail", 299));
+        save(new Product("sku-4", "Amazon Sword Plant", "plant", 899));
+        save(new Product("sku-5", "Java Fern on Driftwood", "plant", 1299));
+        save(new Product("sku-6", "Canister Filter, 500 GPH", "equipment", 6999));
+        save(new Product("sku-7", "CO2 Diffuser Kit", "equipment", 4499));
+        save(new Product("sku-8", "LED Aquarium Light, 24in", "equipment", 5499));
+        save(new Product("sku-9", "Tropical Fish Flakes, 100g", "food", 699));
+        save(new Product("sku-10", "Liquid Plant Fertilizer, 250ml", "fertilizer", 1199));
     }
 
     public void save(Product product) {

@@ -1,4 +1,4 @@
-package com.scg.catalog;
+package com.sachidaquatics.catalog;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +35,7 @@ class CatalogControllerTest {
     void getProductByIdReturnsMatch() {
         ResponseEntity<Product> response = restTemplate.getForEntity(url("/products/sku-2"), Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().name()).isEqualTo("Mechanical Keyboard");
+        assertThat(response.getBody().name()).isEqualTo("Amano Shrimp");
     }
 
     @Test

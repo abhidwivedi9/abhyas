@@ -191,7 +191,7 @@ def build_html() -> str:
 </style>
 </head><body>
   <h1>Abhyas — Status Dashboard</h1>
-  <div class="sub">Sachid Commerce Group · legacy-vm lab · refreshes every 15s · $0 cost, runs entirely local</div>
+  <div class="sub">Sachid Aquatics · legacy-vm lab · refreshes every 15s · $0 cost, runs entirely local</div>
 
   <h2>🚨 Active Incident</h2>
   {alerts_html}
