@@ -1,0 +1,13 @@
+id: INC-heartbeat-missing-env-file
+title: "Heartbeat completely refuses to start after a partial config rollout"
+kind: incident
+tier: L1
+role: sre-oncall
+category: linux-systemd
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 20
+severity: sev2
+interview_tags:
+  - "systemd-job-failure-vs-app-crash"
+  - "incomplete-partial-deploys"
