@@ -11,10 +11,10 @@ Host: legacy-vm.
 
 ## What the customer / stakeholder says
 
-> "We took heartbeat down briefly for a planned maintenance window and
-> decommissioned an old internal dependency it used to rely on at the
-> same time. It should have been updated to not need that anymore, but
-> it won't come back up."
+> "We took the life-support monitor down briefly for a planned
+> maintenance window and decommissioned an old internal dependency it
+> used to rely on at the same time. It should have been updated to not
+> need that anymore, but it won't come back up."
 
 ## What you know
 

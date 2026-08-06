@@ -9,9 +9,9 @@
 ## What the customer / stakeholder says
 
 > "Doing a quarterly review of our logrotate configs across the fleet.
-> Can you confirm heartbeat's log rotation policy on legacy-vm is
-> actually working, not just present? A few other hosts had configs that
-> looked fine but silently weren't doing anything."
+> Can you confirm the life-support monitor's log rotation policy on this
+> host is actually working, not just present? A few other hosts had
+> configs that looked fine but silently weren't doing anything."
 
 ## What you know
 

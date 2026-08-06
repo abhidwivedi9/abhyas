@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""heartbeat — the toy service Milestone 1 scenarios break and learners fix.
+"""heartbeat — Sachid Aquatics' life-support telemetry monitor.
 
-Simulates a minimal app: writes a heartbeat line to its log every 2s and
-serves a trivial healthcheck on :8080/health. Real enough to have a PID,
-real logs, and a real port to probe, without pulling in a framework.
+In-world, this is the service that continuously confirms filtration,
+heating, and CO2 injection systems across the fish-holding facility are
+still reporting in — the kind of "is everything alive" check a real
+aquaculture operation runs. Milestone 1 scenarios break and learners fix
+it. Simulates a minimal app: writes a heartbeat line to its log every 2s
+and serves a trivial healthcheck on :8080/health. Real enough to have a
+PID, real logs, and a real port to probe, without pulling in a framework.
 """
 import http.server
 import socketserver

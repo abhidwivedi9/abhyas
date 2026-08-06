@@ -12,7 +12,8 @@ Host: legacy-vm.
 ## What the customer / stakeholder says
 
 > "Someone on the team was decommissioning an old, unrelated service on
-> legacy-vm earlier today. Heartbeat's been down since shortly after."
+> the monitoring host earlier today. Life-support telemetry's been down
+> since shortly after."
 
 ## What you know
 

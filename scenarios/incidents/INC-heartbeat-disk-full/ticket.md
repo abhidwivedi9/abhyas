@@ -11,9 +11,11 @@ written to in over 60s, but the service reports active.
 
 ## What the customer / stakeholder says
 
-> "The dashboard says heartbeat is healthy and green, but something feels
-> off — the log viewer hasn't refreshed in a while. Can you actually
-> confirm it's working, not just confirm the check passes?"
+> "The dashboard says life-support telemetry is healthy and green, but
+> something feels off — the log viewer hasn't refreshed in a while. Can
+> you actually confirm it's working, not just confirm the check passes?
+> If the CO2 monitor's actually gone silent, that's a welfare problem,
+> not just a metrics gap."
 
 ## What you know
 

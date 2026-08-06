@@ -13,7 +13,7 @@ written to in over 60s, but the service reports active.
 
 > "Same complaint as last time — dashboard's green, but I don't trust it.
 > A security hardening pass touched file ownership across `/var/log`
-> earlier today. Can you confirm heartbeat is genuinely fine?"
+> earlier today. Can you confirm the life-support monitor is genuinely fine?"
 
 ## What you know
 

@@ -11,8 +11,10 @@ been failing for 2m. Service: heartbeat. Host: legacy-vm.
 
 ## What the customer / stakeholder says
 
-> "Ops dashboard's been red for a few minutes. Can someone confirm heartbeat
-> is actually down and not just a flaky check?"
+> "The facility monitoring dashboard's been red for a few minutes. Can
+> someone confirm the life-support telemetry service is actually down and
+> not just a flaky check? We can't have blind spots on the CO2 and
+> filtration systems."
 
 ## What you know
 

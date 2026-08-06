@@ -12,7 +12,8 @@ Host: legacy-vm.
 ## What the customer / stakeholder says
 
 > "There was a partial rollout earlier today meant to add some new
-> configuration to heartbeat. It might not have fully completed."
+> configuration to the life-support monitor. It might not have fully
+> completed."
 
 ## What you know
 

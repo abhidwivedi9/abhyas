@@ -11,8 +11,9 @@ Host: legacy-vm.
 
 ## What the customer / stakeholder says
 
-> "Ops ran routine file cleanup on legacy-vm overnight. Heartbeat's been
-> down since. Nothing in the change log about heartbeat itself."
+> "Facilities ran routine file cleanup on the tank-monitoring host
+> overnight. Life-support telemetry's been down since. Nothing in the
+> change log about the monitor itself."
 
 ## What you know
 

@@ -11,9 +11,10 @@ by its scheduled job in over 15 minutes.
 
 ## What the customer / stakeholder says
 
-> "The daily report cron job seems to have stopped. Weird thing is, when
-> I SSH in and just run the script by hand, it works completely fine.
-> I don't get it."
+> "The daily facility summary job seems to have stopped — that's the one
+> that rolls up life-support telemetry counts for the ops team. Weird
+> thing is, when I SSH in and just run the script by hand, it works
+> completely fine. I don't get it."
 
 ## What you know
 

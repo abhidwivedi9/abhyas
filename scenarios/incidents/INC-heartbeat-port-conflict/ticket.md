@@ -11,9 +11,9 @@ Host: legacy-vm.
 
 ## What the customer / stakeholder says
 
-> "Another team just deployed a quick diagnostic tool on legacy-vm for
-> some manual testing. Heartbeat went down right after. They swear it's
-> unrelated."
+> "Another team just deployed a quick diagnostic tool on the monitoring
+> host for some manual testing. Life-support telemetry went down right
+> after. They swear it's unrelated."
 
 ## What you know
 

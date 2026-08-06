@@ -12,7 +12,7 @@ Host: legacy-vm.
 ## What the customer / stakeholder says
 
 > "Someone was tightening up service accounts across the fleet earlier.
-> Heartbeat might have been touched — not sure."
+> The life-support monitor might have been touched — not sure."
 
 ## What you know
 

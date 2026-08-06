@@ -12,7 +12,7 @@ by its scheduled job in over 15 minutes.
 ## What the customer / stakeholder says
 
 > "Someone was doing a permissions cleanup on /opt earlier today. The
-> report job might have gotten caught up in it."
+> daily facility summary job might have gotten caught up in it."
 
 ## What you know
 
