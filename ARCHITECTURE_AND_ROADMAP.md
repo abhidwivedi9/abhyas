@@ -82,7 +82,7 @@ marketplace connecting independent breeders and plant nurseries to customers. Pa
 ledger, and fraud detection run under the **SwarnaPay** brand. This domain is chosen
 deliberately — it forces genuinely hard problems that map cleanly onto real interview
 topics: **livestock is perishable and time-critical** (a fish order has a real biological
-clock a electronics order never does — this drives shipping SLOs and DR posture with
+clock a generic e-commerce order never does — this drives shipping SLOs and DR posture with
 actual stakes), inventory is partly *biological* (mortality, quarantine holds, breeding
 cycles — not just stock counters), event-driven flows, PCI-flavored compliance, and
 festival-sale traffic spikes.
@@ -259,7 +259,14 @@ PR → GitHub Actions: lint → unit tests → SonarQube gate → build → Triv
 
 ---
 
-## 6. AI Ops Architecture (the differentiator)
+## 6. AI Architecture — Two Distinct Systems
+
+Two AI subsystems exist for two different audiences — deliberately kept separate,
+with different design principles, because conflating "AI that helps engineers
+operate the platform" with "AI that's a customer-facing product feature" would
+blur the read-only safety guarantee that makes AI Ops trustworthy (ADR-0005).
+
+### 6.1 AI Ops — Abhigya (engineer-facing, the differentiator)
 
 ```
 ┌──────────────────────────── aiops/ ────────────────────────────┐
@@ -285,6 +292,36 @@ endpoint via config for the local track; all agent prompts and evals live in-rep
 
 Learning arc: use the tools → read their implementation → extend them (add a tool to the
 MCP server as a graded ticket) → evaluate them (agent eval harness against replayed incidents).
+
+Lands in **Milestone 13**.
+
+### 6.2 AI Product Features — Anshu (customer-facing)
+
+A completely different subsystem, serving `recommendation-service` and (once
+built) the Customer and AI Assistant portal UIs — not read-only in the same
+sense as AI Ops, because giving advice *is* its job, but every recommendation
+is presented as advice a customer chooses to act on, never an autonomous
+action taken on their behalf (no auto-purchasing, no auto-modifying an order):
+
+- **Fish/plant recommendation** — suggests livestock and plants based on tank
+  size, experience level, and existing stock
+- **Compatibility checking** — flags incompatible tank-mates before checkout
+  (a genuinely valuable, genuinely hard feature — aggression, water-parameter
+  overlap, and bioload all matter, not just "same water type")
+- **Water parameter analysis** — customer submits test-strip readings, gets
+  plain-language interpretation and corrective guidance
+- **Aquarium setup guidance** — walks a new customer through cycling a tank,
+  stocking order, and equipment sizing
+- **Disease identification** (future-ready) — photo-based triage, flagged as
+  informational only, never a substitute for veterinary/expert advice
+- **Product recommendation & inventory/sales forecasting** — feeds
+  `supplier-service` and `analytics-service` planning
+
+Design principle: **advisory only**. Anshu suggests; the customer decides.
+This mirrors AI Ops's own human-in-the-loop principle from a different
+angle — the common thread across *both* AI subsystems in this project is
+that AI recommends, a human confirms, nothing acts autonomously on
+consequential decisions.
 
 ---
 
@@ -343,23 +380,27 @@ runbooks + docs/ADRs + interview-handbook chapter. **A milestone is done only wh
 |---|---|---|---|---|
 | 0 | **Blueprint** (this doc) | Architecture, roadmap, repo scaffolding, CONTRIBUTING, coding standards, ADR-0001..0005 | — | Repo public, CI green on empty scaffold |
 | 1 | **Foundations: Linux, Git, Bash** | `abhyasctl` v0, dev container, Ansible-provisioned "legacy VM" lab | 12 (broken services, disk pressure, perms, cron, systemd) | Learner can triage a broken VM to green in <30 min |
-| 2 | **Containers & first service** | `catalog-service` + `cart-service`, hardened multi-stage Dockerfiles, compose dev env | 10 (OOM kills, zombie procs, layer bloat, registry auth) | Images <200MB, non-root, Trivy clean |
-| 3 | **Kubernetes core (kind)** | All core services on kind, Kustomize bases/overlays, probes, resources, HPA | 20 (CrashLoopBackOff taxonomy, DNS, probes-lie scenarios, evictions) | Full app serves checkout on kind |
+| 2 | **Containers & first service** | `catalog-service` (fish/plant catalog) + `cart-service`, hardened multi-stage Dockerfiles, compose dev env | 10 (OOM kills, zombie procs, layer bloat, registry auth) | Images <200MB, non-root, Trivy clean |
+| 3 | **Kubernetes core (kind)** | All core services on kind, Kustomize bases/overlays, probes, resources, HPA | 20 (fish catalog service unavailable, CrashLoopBackOff taxonomy, DNS, probes-lie scenarios, evictions) | Full app serves checkout on kind |
 | 4 | **CI (GitHub Actions + Jenkins legacy)** | Full PR pipeline, SonarQube, Trivy gates, ephemeral integration envs | 12 (flaky tests, cache poisoning, broken gate, secret leak in logs) | PR-to-signed-image <10 min |
 | 5 | **Terraform & GCP landing zone** | Network, GKE, IAM, Artifact Registry modules; state mgmt; OpenTofu parity | 15 (state lock, drift, destroy-protection saves, IAM propagation) | `terraform plan` clean on all envs; policy checks enforced |
 | 6 | **GitOps (Argo CD) + Helm** | abhyas-gitops repo live, app-of-apps, Argo Rollouts canary | 14 (sync loops, drift, pruning disasters, helm hook failures) | Zero kubectl-apply to prod; canary auto-aborts on SLO breach |
-| 7 | **Observability** | Prom/Thanos, Loki, OTel+Jaeger, SLOs-as-code, dashboards-as-code, pager sim | 15 (alert storm, cardinality explosion, sampling lies, silent SLO burn) | Multi-burn-rate alerts fire correctly in injected burn test |
-| 8 | **Data & events** | Kafka (Strimzi), RabbitMQ, Postgres HA, Redis, Mongo; saga checkout flow | 25 (consumer lag, rebalance storms, poison msgs, replica lag, failover) | Checkout survives broker-node kill with zero lost orders |
-| 9 | **Service mesh & traffic** | Istio, mTLS strict, circuit breaking, fault injection as chaos engine | 14 (sidecar OOM, mTLS cert expiry, retry storms, 503 taxonomies) | Region-internal p99 overhead <10 ms documented |
+| 7 | **Observability** | Prom/Thanos, Loki, OTel+Jaeger, SLOs-as-code, dashboards-as-code, pager sim | 15 (recommendation-service latency spike, alert storm, cardinality explosion, sampling lies, silent SLO burn) | Multi-burn-rate alerts fire correctly in injected burn test |
+| 8 | **Data & events** | Kafka (Strimzi), RabbitMQ, Postgres HA, Redis, Mongo; saga checkout flow | 25 (plant inventory sync failure, inventory database crash, consumer lag, rebalance storms, poison msgs, replica lag, failover) | Checkout survives broker-node kill with zero lost orders |
+| 9 | **Service mesh & traffic** | Istio, mTLS strict, circuit breaking, fault injection as chaos engine | 14 (supplier API timeout, sidecar OOM, mTLS cert expiry, retry storms, 503 taxonomies) | Region-internal p99 overhead <10 ms documented |
 | 10 | **Security & secrets** | Vault + ESO, workload identity, policies, supply chain (cosign/SLSA) | 20 (rotation partial-failure, leaked key drill, policy-blocks-hotfix) | Secret rotation drill completes <20 min, zero downtime |
-| 11 | **Multi-region & DR** | prod-euw1 cluster, global LB, ledger failover, Velero, DR runbooks | 12 (region evac game day, corrupt backup twist, split-brain) | Region evacuation meets RTO 15 min in graded drill |
-| 12 | **Performance, capacity, cost** | Load profiles (k6), JVM tuning guide, rightsizing, spot strategy, budgets | 20 (Black Friday sim, memory leak hunt, $40k overrun incident) | Black Friday sim passes SLOs at 3k rps on documented budget |
-| 13 | **AI Ops** | MCP server, incident copilot, deploy validator, runbook generator, ChatOps, agent eval harness | 15 build/extend tickets + AI-assisted replays of past incidents | Copilot's hypothesis ranked top-3 correct on ≥70% of replayed incidents |
+| 11 | **Multi-region & DR** | prod-euw1 cluster, global LB, ledger failover, Velero, DR runbooks | 12 (multi-region failover during peak traffic, region evac game day, corrupt backup twist, split-brain) | Region evacuation meets RTO 15 min in graded drill |
+| 12 | **Performance, capacity, cost** | Load profiles (k6), JVM tuning guide, rightsizing, spot strategy, budgets | 20 (GKE autoscaling during Monsoon Aquascaping Festival Sale, memory leak hunt, $12k overrun incident) | Festival Sale sim passes SLOs at documented budget |
+| 13 | **AI Ops** | MCP server, incident copilot, deploy validator, runbook generator, ChatOps, agent eval harness | 15 build/extend tickets (incl. AI recommendation-service degradation) + AI-assisted replays of past incidents | Copilot's hypothesis ranked top-3 correct on ≥70% of replayed incidents |
 | 14 | **Capstone & interview engine** | 6 Sev-1 game days, Incident Commander sim, full interview handbook (system design + troubleshooting + behavioral bank mapped to scenarios), certification-style final assessment | 6 L4 game days | Learner completes a cold Sev-1 with passing IC rubric |
+| 15 | **UI: Customer, Admin, Vendor, Ops & AI Assistant portals** | Customer storefront (browse/cart/checkout against the real APIs), Admin portal (ops), Vendor portal (supplier-service), Operations Dashboard, AI Assistant Dashboard (Anshu) — deliberately last, once every API it consumes is stable, observable, and battle-tested | Frontend-specific: broken builds, CDN cache poisoning, client-side observability (RUM), accessibility regressions | A real customer could complete a purchase end-to-end through the UI against the live backend |
 
 **Sequencing rationale:** app-before-platform-before-scale mirrors how you'd actually
 join a company; every layer added becomes new failure surface for scenarios in later
-milestones (e.g., Milestone 11's best scenarios break things built in 5, 6, and 8).
+milestones (e.g., Milestone 11's best scenarios break things built in 5, 6, and 8). The
+UI lands last and deliberately so — building it against APIs that are still
+churning would mean rebuilding it repeatedly; building it last means it's built once,
+against interfaces that have already been proven under real failure conditions.
 
 ---
 
