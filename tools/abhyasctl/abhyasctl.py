@@ -10,6 +10,8 @@ the local-first principle (ADR-0003) — no Vagrant/VirtualBox required.
 from __future__ import annotations
 
 import argparse
+import os
+import shutil
 import subprocess
 import sys
 import time
@@ -53,8 +55,30 @@ def find_scenario(scenario_id: str) -> Path:
     sys.exit(f"error: scenario '{scenario_id}' not found (try: abhyasctl scenario list)")
 
 
+def find_bash() -> str:
+    """On Windows, plain "bash" on PATH can resolve to the WSL launcher
+    (C:\\Windows\\System32\\bash.exe), which expects /mnt/c/... paths, not
+    C:/... ones — causing "No such file or directory" on a perfectly valid
+    script. Prefer Git Bash explicitly when it's findable."""
+    for candidate in (r"C:\Program Files\Git\bin\bash.exe", r"C:\Program Files\Git\usr\bin\bash.exe"):
+        if Path(candidate).is_file():
+            return candidate
+    found = shutil.which("bash")
+    return found or "bash"
+
+
 def run_script(script: Path) -> int:
-    return subprocess.call(["bash", str(script)])
+    # bash treats backslashes as escape characters, so a raw Windows path
+    # (C:\Users\...) gets mangled into garbage — pass forward slashes instead.
+    env = os.environ.copy()
+    # Scenario scripts pass container-internal paths (e.g. /opt/heartbeat/...)
+    # to `docker exec`. MSYS's bash auto-rewrites POSIX-looking args into
+    # Windows paths before non-MSYS executables (like docker.exe) ever see
+    # them — harmless on Linux/CI, but silently corrupts these paths on
+    # Windows. Disabling it is a no-op everywhere except Git Bash on Windows.
+    env["MSYS_NO_PATHCONV"] = "1"
+    env["MSYS2_ARG_CONV_EXCL"] = "*"
+    return subprocess.call([find_bash(), str(script).replace("\\", "/")], env=env)
 
 
 # --- commands -----------------------------------------------------------------

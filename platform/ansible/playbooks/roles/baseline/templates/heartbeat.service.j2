@@ -8,6 +8,11 @@ User=heartbeat
 ExecStart=/usr/bin/python3 /opt/heartbeat/heartbeat.py
 Restart=on-failure
 RestartSec=2
+# Explicit restart-limiting (don't rely on system.conf defaults, which vary
+# by distro/version): 5 failures within 10s -> systemd stops trying and the
+# unit lands in a hard `failed` state, deterministically, every time.
+StartLimitIntervalSec=10
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target

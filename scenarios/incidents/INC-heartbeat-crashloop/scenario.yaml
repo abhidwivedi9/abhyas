@@ -1,0 +1,14 @@
+id: INC-heartbeat-crashloop
+title: "Heartbeat service down, health checks failing"
+kind: incident
+tier: L1
+role: sre-oncall
+category: linux-systemd
+requires_milestone: 1
+environments: [legacy-vm]
+time_box_minutes: 30
+severity: sev2
+interview_tags:
+  - "debugging-a-crashlooping-service"
+  - "systemd-restart-limits"
+  - "reading-logs-under-pressure"
